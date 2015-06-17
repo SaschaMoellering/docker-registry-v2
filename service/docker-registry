@@ -18,7 +18,7 @@ fail_unless_root() {
 case "$1" in
   start)
     fail_unless_root
-    
+    cd /etc/docker && /usr/local/bin/docker-compose up -d
     echo $! > $DOCKER_REGISTRY_PIDFILE
     ;;
 
