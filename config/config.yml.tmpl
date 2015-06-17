@@ -1,0 +1,23 @@
+version: 0.1
+log:
+  level: debug
+  formatter: text
+  fields:
+    service: registry
+    environment: staging
+storage:
+    cache:
+        layerinfo: inmemory
+    s3:
+        region: @REGION@
+        bucket: @BUCKET@
+        encrypt: true
+        secure: true
+        v4auth: true
+        chunksize: 5242880
+        rootdirectory: /images
+http:
+    addr: :5000
+    secret: asecretforlocaldevelopment
+    debug:
+        addr: localhost:5001
