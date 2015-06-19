@@ -69,28 +69,28 @@
       "VpcId":{  
          "Type":"String",
          "Description":"VpcId of your existing Virtual Private Cloud (VPC).",
-         "Default":"vpc-04e27861"
+         "Default":"vpc-5b614b30"
       },
       "Subnets":{  
          "Type":"CommaDelimitedList",
-         "Default":"subnet-95fe3cbe,subnet-456e017f",
+         "Default":"subnet-ca749693,subnet-6ecb6b0b",
          "Description":"The list of SubnetIds where the stack will be launched"
       },
       "AZs":{  
          "Type":"CommaDelimitedList",
-         "Default":"us-east-1b,us-east-1e",
+         "Default":"eu-west-1a,eu-west-1b",
          "Description":"The list of AvailabilityZones for your Virtual Private Cloud (VPC). It needs to be consistent with the AZ of your subnets."
       },
       "SGId":{
          "Type":"String",
          "Description":"Security Group ID of your exististing VPC",
-         "Default":"sg-9e488efa"
+         "Default":"sg-6865cd0d"
       },
       "S3Bucket":{
          "Type":"String",
          "Description":"The S3 bucket to store the Docker images",
          "ConstraintDescription":"must be the name of an existing S3 Bucket.",
-         "Default":"docker-images"
+         "Default":"zx-docker"
       }
    },
    "Mappings":{  
@@ -418,6 +418,7 @@
                         "yum update -y\n",
                         "yum install docker -y\n",
                         "yum install git -y\n",
+                        "yum install python-pip -y\n",
                         "pip install -U docker-compose\n",
                         "export AWS_BUCKET=",
                         { "Ref" : "S3Bucket" },
@@ -430,9 +431,9 @@
                         "mkdir -p /etc/docker/certs\n",
                         "mkdir -p /etc/docker/config\n",
                         "mkdir -p /tmp/certs\n",
-                        "IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`\n"
-                        "cp docker-registry-v2/config/config.yml /etc/docker/\n",
-                        "openssl req -new -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -subj \"/C=DE/ST=Berlin/L=Berlin/O=zanox AG/CN=$IP\"-x509 -days 365 -out certs/domain.crt"
+                        "IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`\n",
+                        "cp docker-registry-v2/config/docker-compose.yml /etc/docker/\n",
+                        "openssl req -new -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -subj \"/C=DE/ST=Berlin/L=Berlin/O=zanox AG/CN=$IP\"-x509 -days 365 -out certs/domain.crt\n",
                         "cp /tmp/certs/* /etc/docker/certs\n",
                         "sed -e \"s/@BUCKET@/$AWS_BUCKET/g\" -e \"s/@REGION@/$AWS_REGION/g\" docker-registry-v2/config/config.yml.tmpl > /etc/docker/config/config.yml\n",
                         "cp docker-registry-v2/service/docker-registry /etc/init.d\n",
