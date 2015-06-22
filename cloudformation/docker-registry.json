@@ -91,6 +91,16 @@
          "Description":"The S3 bucket to store the Docker images",
          "ConstraintDescription":"must be the name of an existing S3 Bucket.",
          "Default":"zx-docker"
+      },
+      "S3Accesskey":{
+         "Type":"String",
+         "Description":"The AWS access key",
+         "ConstraintDescription":"Must not be null"
+      },
+      "S3Secretkey":{
+         "Type":"String",
+         "Description":"The AWS secret key",
+         "ConstraintDescription":"Must not be null"
       }
    },
    "Mappings":{  
@@ -426,6 +436,12 @@
                         "export AWS_REGION=",
                         { "Ref" : "AWS::Region" },
                         "\n",
+                        "export AWS_ACCESS_KEY=",
+                        { "Ref" : "S3Accesskey" },
+                        "\n",
+                        "export AWS_SECRET_KEY=",
+                        { "Ref" : "S3Secretkey" },
+                        "\n",
                         "cd /tmp && git clone https://github.com/SaschaMoellering/docker-registry-v2.git\n",
                         "mkdir -p /etc/docker/\n",
                         "mkdir -p /etc/docker/certs\n",
@@ -435,7 +451,7 @@
                         "cp docker-registry-v2/config/docker-compose.yml /etc/docker/\n",
                         "openssl req -new -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -subj \"/C=DE/ST=Berlin/L=Berlin/O=zanox AG/CN=$IP\"-x509 -days 365 -out certs/domain.crt\n",
                         "cp /tmp/certs/* /etc/docker/certs\n",
-                        "sed -e \"s/@BUCKET@/$AWS_BUCKET/g\" -e \"s/@REGION@/$AWS_REGION/g\" docker-registry-v2/config/config.yml.tmpl > /etc/docker/config/config.yml\n",
+                        "sed -e \"s/@BUCKET@/$AWS_BUCKET/g\" -e \"s/@REGION@/$AWS_REGION/g\" -e \"s/@AWSACCESSKEY@/$AWS_ACCESS_KEY/g\" -e \"s/@AWSSECRETKEY@/$AWS_SECRET_KEY/g\" docker-registry-v2/config/config.yml.tmpl > /etc/docker/config/config.yml\n",
                         "cp docker-registry-v2/service/docker-registry /etc/init.d\n",
                         "chmod a+x /etc/init.d/docker-registry\n",
                         "chkconfig --add docker-registry\n",
@@ -557,13 +573,13 @@
             ],
             "Listeners":[  
                {  
-                  "LoadBalancerPort":"80",
-                  "InstancePort":"80",
+                  "LoadBalancerPort":"5000",
+                  "InstancePort":"5000",
                   "Protocol":"HTTP"
                }
             ],
             "HealthCheck":{  
-               "Target":"HTTP:80/",
+               "Target":"HTTP:5000/",
                "HealthyThreshold":"3",
                "UnhealthyThreshold":"5",
                "Interval":"30",
@@ -587,8 +603,8 @@
                },
                {  
                   "IpProtocol":"tcp",
-                  "FromPort":"80",
-                  "ToPort":"80",
+                  "FromPort":"5000",
+                  "ToPort":"5000",
                   "CidrIp":"0.0.0.0/0"
                }
             ]
