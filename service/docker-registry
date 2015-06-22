@@ -19,7 +19,7 @@ case "$1" in
   start)
     fail_unless_root
     cd /etc/docker 
-    docker run -d -p 5000:5000 -v /etc/docker/data:/data -v /etc/registry/certs:/certs -v /etc/docker/config:/go/src/github.com/docker/distribution/cmd/registry -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt --restart=always -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key registry:2 
+    docker run -d -p 5000:5000 -v /etc/docker/data:/data -v /etc/docker/certs:/certs -v /etc/docker/config:/go/src/github.com/docker/distribution/cmd/registry -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt --restart=always -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key registry:2 
     echo $! > $DOCKER_REGISTRY_PIDFILE
     ;;
 
