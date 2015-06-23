@@ -2,7 +2,7 @@
 
 #
 # chkconfig: 2345 95 05
-# description: docker-registry
+# description: docker-registry v2
 #
 
 BASE=$(basename $0)
@@ -19,15 +19,14 @@ case "$1" in
   start)
     fail_unless_root
     cd /etc/docker 
-    docker run -d -p 5000:5000 -v /etc/docker/data:/data -v /etc/docker/certs:/certs -v /etc/docker/config:/go/src/github.com/docker/distribution/cmd/registry -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt --restart=always -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key registry:2 
-    echo $! > $DOCKER_REGISTRY_PIDFILE
+    docker run -d -p 5000:5000 -v /etc/docker/data:/data -v /etc/docker/certs:/certs -v /etc/docker/config:/go/src/github.com/docker/distribution/cmd/registry --name=registry -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt --restart=always -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key registry:2 
     ;;
 
   stop)
     fail_unless_root
-    log_begin_msg "Stopping docker-regitry: $BASE"
-    start-stop-daemon --stop --pidfile "$DOCKER_REGISTRY_PIDFILE"
-    log_end_msg $?
+    echo "Stopping docker-registry: $BASE"
+    docker rm -f registry
+    echo $?
     ;;
 
     *)
